@@ -4,13 +4,12 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Reservas</title>
+      <title>Solicitudes</title>
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
         rel="stylesheet"
       />
-      <link
-      href="../css/estilosRecerva.css" rel="stylesheet" />
+      <link href="../css/estilosAdministrador.css" rel="stylesheet" />
       <link rel="icon" href="../imagenes/icono.png" />
       <style>
         header,
@@ -29,7 +28,7 @@
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-6 col-12">
-            <h1 class="h1-responsive">Historial de reservas</h1>
+            <h1 class="h1-responsive">Solicitudes de reservas</h1>
           </div>
           <div class="col-md-6 col-12 text-md-end">
             <div class="d-flex align-items-center justify-content-end">
@@ -46,12 +45,12 @@
     </header>
 
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <div class="container">
-        <span class="navbar-text ml-auto"> Nombre de Usuario </span>
-
-        <a class="nav-link" href="principal.html">Atras</a>
-      </div>
-    </nav>
+        <div class="container">
+          <span class="navbar-text ml-auto"> Nombre de Usuario </span>
+  
+          <a class="nav-link" href="#">Cerrar Sesión</a>
+        </div>
+      </nav>
 
     <div class="container mt-5">
       <div class="row mt-4">
@@ -61,6 +60,7 @@
               <thead class="table-light text-center">
                 <tr>
                   <th>#</th>
+                  <th>Nombre</th>
                   <th>Numero</th>
                   <th>Capacidad</th>
                   <th>Descripcion</th>
@@ -73,6 +73,7 @@
               <tbody id="tablaAulas1" class="text-center">
                 <tr class="fila-ejemplo">
                   <td class="numero">1</td>
+                  <td class="nombre">Denis Brun</td>
                   <td class="numero-aula">690B</td>
                   <td class="capacidad">50</td>
                   <td class="descripcion">
@@ -81,20 +82,15 @@
                   <td class="fec">2023-10-07</td>
                   <td class="ho_en">11:14:00</td>
                   <td class="ho_sali">12:45:00</td>
-                  <td class="estado">Pendiente</td>
+                  <td class="estado">
+                    <select class="estado-selector">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Aceptado">Aceptar</option>
+                        <option value="Rechazado">Rechazar</option>
+                    </select>
+                  </td>
+                
                 </tr>
-                <tr class="fila-ejemplo">
-                    <td class="numero">1</td>
-                    <td class="numero-aula">690B</td>
-                    <td class="capacidad">50</td>
-                    <td class="descripcion">
-                      "Ubiacion: Departamento de matematicas"
-                    </td>
-                    <td class="fec">2023-10-07</td>
-                    <td class="ho_en">11:14:00</td>
-                    <td class="ho_sali">12:45:00</td>
-                    <td class="estado">Aceptado</td>
-                  </tr>
               </tbody>
             </table>
           </div>
@@ -128,20 +124,29 @@
     </footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#tablaAulas1 tr').each(function() {
-                var estado = $(this).find('.estado').text().trim();
-    
-                if (estado == 'Pendiente') {
-                    $(this).css('background-color', 'yellow');
-                } else if (estado == 'Aceptado') {
-                    $(this).css('background-color', 'green');
-                } else if (estado == 'Rechazado') {
-                    $(this).css('background-color', 'red');
-                }
-            });
+      $(document).ready(function () {
+        $(".estado-selector").on("change", function () {
+          var selectedValue = $(this).val();
+          var currentRow = $(this).closest("tr");
+
+          switch (selectedValue) {
+            case "Pendiente":
+              currentRow.css("background-color", "yellow");
+              break;
+            case "Aceptado":
+              currentRow.css("background-color", "green");
+              break;
+            case "Rechazado":
+              currentRow.css("background-color", "red");
+              break;
+          }
         });
+
+        // Inicializar colores basados en el valor del selector al cargar la página
+        $(".estado-selector").each(function () {
+          $(this).trigger("change");
+        });
+      });
     </script>
-    
   </body>
 </html>
