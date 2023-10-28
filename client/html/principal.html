@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aulas</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="../imagenes/icono.png" />
+    <style>
+      header,
+      footer {
+        background-color: #bdbfbf !important;
+      }
+      button {
+        background-color: #f45572 !important;
+        color: #fff !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="text-black py-4">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 col-12">
+            <h1 class="h1-responsive">Reserva de Aulas</h1>
+          </div>
+          <div class="col-md-6 col-12 text-md-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              ></button>
+
+              <img
+                src="../imagenes/logo-fcyt.png"
+                alt="Imagen de Aulas"
+                class="img-fluid"
+                style="max-width: 60px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+      <div class="container">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <span id="nameAd" class="nav-link">Nombre de Usuario</span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="reservas.html">Ver Reservas</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Cerrar Sesión</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Formulario de búsqueda por fecha -->
+    <div class="container mt-4">
+      <form id="searchByDateForm">
+        <div class="form-group">
+          <label for="dateInput">Fecha:</label>
+          <input type="date" class="form-control" id="dateInput" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+      </form>
+
+      <!-- Tabla de resultados por fecha -->
+      <table class="table table-responsive mt-4" id="resultsByDateTable">
+        <!-- Aquí se llenarán los resultados dinámicamente -->
+      </table>
+    </div>
+
+    <!-- Formulario de búsqueda por capacidad -->
+    <div class="container mt-4">
+      <form id="searchByCapacityForm">
+        <div class="form-group">
+          <label for="capacityInput">Capacidad:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="capacityInput"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+      </form>
+
+      <!-- Tabla de resultados por capacidad -->
+      <table class="table table-responsive mt-4" id="resultsByCapacityTable">
+        <!-- Aquí se llenarán los resultados dinámicamente -->
+      </table>
+    </div>
+
+    <!-- Formulario de búsqueda por hora -->
+    <div class="container mt-4">
+      <form id="searchByHourForm">
+        <div class="form-group">
+          <label for="hourInput">Hora:</label>
+          <input type="time" class="form-control" id="hourInput" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+      </form>
+
+      <!-- Tabla de resultados por hora -->
+      <table class="table table-responsive mt-4" id="resultsByHourTable">
+        <!-- Aquí se llenarán los resultados dinámicamente -->
+      </table>
+    </div>
+
+    <footer class="text-black text-center">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-6 col-md-3 mt-2">
+            <img
+              src="../imagenes/logo-umss.png"
+              alt="Imagen 1"
+              class="img-fluid mx-auto d-block"
+              style="max-width: 60px"
+            />
+          </div>
+          <div class="col-6 col-md-3 mt-2">
+            <img
+              src="../imagenes/logo-fcyt.png"
+              alt="Imagen 2"
+              class="img-fluid mx-auto d-block"
+              style="max-width: 50px"
+            />
+          </div>
+          <div class="col-12 col-md-6 mt-2">
+            <p>&copy; 2023 WebServer. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/principal.js"></script>
+  </body>
+</html>
