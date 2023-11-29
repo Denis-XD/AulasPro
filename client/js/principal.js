@@ -1,107 +1,186 @@
-const userName = sessionStorage.getItem('user') || 'Nombre de Usuario';
+$(document).ready(function () {
+    const userName = sessionStorage.getItem('user') || 'Nombre de Usuario';
     $('#nameAd').text(userName);
 
-    document.getElementById('searchByDateForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const date = document.getElementById('dateInput').value;
+    $('#buscarPorFechaBtn').click(function(event) {
+        event.preventDefault();
+        const fechaSeleccionada = $('#fecha').val();
+        const periodoSeleccionado = $('#periodo').val();
         
-        try {
-            const response = await fetch(`http://localhost:5000/ambiente/disponible/${date}`);
-            const data = await response.json();
-            
-            displayResultsInTable('resultsByDateTable', data);
-        } catch (error) {
-            console.error("Hubo un error al obtener los ambientes disponibles:", error);
-        }
-    });
-    
+  
 
-    document.getElementById('searchByCapacityForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const capacity = document.getElementById('capacityInput').value;
-        
-        try {
-            // Realizar solicitud GET al backend con la capacidad como parámetro
-            ///const response = await fetch(`/disponiblePorCapacidad/${capacity}`);
-            const response = await fetch(`http://localhost:5000/ambiente/disponiblePorCapacidad/${capacity}`);
-            const data = await response.json();
-    
-            // Si la respuesta contiene un error, lo muestra
-            if (data.error) {
-                alert(data.error);
-                return;
-            }
-    
-            // Muestra los resultados en la tabla 'resultsByCapacityTable' utilizando la función displayResultsInTable
-            displayResultsInTable('resultsByCapacityTable', data);
-        } catch (error) {
-            console.error('Error al obtener los ambientes por capacidad:', error);
-            alert('Error al buscar ambientes por capacidad. Por favor, intenta de nuevo.');
+        if (new Date(fechaSeleccionada) <= new Date()) {
+            alert("Ingrese una fecha válida.");
+            return;
         }
-    });
+         
     
+        buscarAmbientesPorFecha(fechaSeleccionada, periodoSeleccionado);
+    });
 
-    document.getElementById('searchByHourForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const hour = document.getElementById('hourInput').value;
-        
-        try {
-            //const response = await fetch(`/disponiblePorHora/${hour}`);
-            const response = await fetch(`http://localhost:5000/ambiente/disponiblePorHora/${hour}`);
-            
-            if (!response.ok) {
-                throw new Error("Error en la respuesta del servidor");
-            }
-            
-            const data = await response.json();
-            
-            displayResultsInTable('resultsByHourTable', data);
-    
-        } catch (error) {
-            alert('Error al buscar ambientes por hora. Por favor, intenta de nuevo.');
-            console.error(error);
+  
+    $('#buscarPorFechaYCapacidadBtn').click(function(event) {
+        event.preventDefault();
+        const fechaSeleccionada = $('#fechaCapacidad').val();
+        const periodoSeleccionado = $('#periodoCapacidad').val();
+        const capacidadSeleccionada = $('#capacidad').val();
+
+        if (new Date(fechaSeleccionada) <= new Date()) {
+            alert("Ingrese una fecha válida.");
+            return;
+        }
+
+        buscarAmbientesPorFechaYCapacidad(fechaSeleccionada, periodoSeleccionado, capacidadSeleccionada);
+    });
+});
+
+function buscarAmbientesPorFecha(fecha, periodo) {
+    $.ajax({
+        url: `http://localhost:5000/ambiente/aulasDisponibles/${fecha}/${periodo}`,
+        type: 'GET',
+        success: function (ambientes) {
+            mostrarAmbientes(ambientes, fecha, periodo, '#resultadosFecha');
+        },
+        error: function (error) {
+            console.error("Error al obtener ambientes:", error);
+            alert("Error al buscar ambientes.");
         }
     });
-    
-// Ejemplo de función para mostrar los resultados en una tabla
-function displayResultsInTable(tableId, results) {
-    const table = document.getElementById(tableId);
-    table.innerHTML = `
+}
+
+function buscarAmbientesPorFechaYCapacidad(fecha, periodo, capacidad) {
+    $.ajax({
+        url: `http://localhost:5000/ambiente/aulasDisponibles/${fecha}/${periodo}/${capacidad}`,
+        type: 'GET',
+        success: function (ambientes) {
+            mostrarAmbientes(ambientes, fecha, periodo, '#resultadosFechaCapacidad');
+        },
+        error: function (error) {
+            console.error("Error al obtener ambientes:", error);
+            alert("Error al buscar ambientes.");
+        }
+    });
+}
+
+function mostrarAmbientes(ambientes, fecha, periodo, selector) {
+    const contenedorResultados = $(selector);
+    contenedorResultados.empty();
+
+    if (ambientes.length === 0) {
+        alert("No se encontraron resultados.");
+        contenedorResultados.append("<p style='font-size: 1.2em; font-weight': bold'>No se encontraron ambientes disponibles para las opciones seleccionadas.</p>");
+        return;
+    }
+
+    const tabla = $('<table>').addClass('table table-striped table-hover'); 
+    const encabezado = `
         <thead>
             <tr>
-                <th>Tipo</th>
+                <th>Tipo de ambiente</th>
                 <th>Número</th>
                 <th>Capacidad</th>
                 <th>Descripción</th>
                 <th>Facilidades</th>
-                <th>Periodo</th>
-                <th>Reservar</th>
+                <th>Acciones</th>
             </tr>
         </thead>
-        <tbody>
-            ${results.map(result => `
-                <tr>
-                    <td>${result.nombre_tipo}</td>
-                    <td>${result.numero}</td>
-                    <td>${result.capacidad}</td>
-                    <td>${result.descripcion}</td>
-                    <td>
-                        <select class="form-control">
-                        ${result.facilidades ? result.facilidades.split(',').map(facilidad => `
-                            <option value="${facilidad}">${facilidad}</option>
-                        `).join('') : '<option value="">Sin facilidades</option>'}
-                        </select>
-                    </td>
-                    <td>
-                        <select class="form-control">
-                            <option value="06:45:00 - 07:30:00">06:45:00 - 07:30:00</option>
-                            <option value="07:30:00- 08:15:00">07:30:00- 08:15:00</option>
-                            <!-- Agrega más opciones según necesites -->
-                        </select>
-                    </td>
-                    <td><button class="btn btn-primary">Reservar</button></td>
-                </tr>
-            `).join('')}
-        </tbody>
     `;
+    tabla.append(encabezado);
+
+    const cuerpoTabla = $('<tbody>');
+    ambientes.forEach(function (ambiente) {
+        const facilidades = ambiente.facilidades ? ambiente.facilidades.split(',').join(', ') : 'Sin facilidades';
+        const filaAmbiente = `
+            <tr>
+                <td>${ambiente.nombre_tipo}</td>
+                <td>${ambiente.numero}</td>
+                <td>${ambiente.capacidad}</td>
+                <td>${ambiente.descripcion || 'Sin descripción'}</td>
+                <td>${facilidades}</td>
+                <td>
+                    <button class="btn  btn-reservar hover-color-change" data-id="${ambiente.id_ambiente}">Reservar</button>
+                </td>
+            </tr>
+        `;
+        cuerpoTabla.append(filaAmbiente);
+    });
+    tabla.append(cuerpoTabla);
+    const tablaResponsiva = $('<div>').addClass('table-responsive').append(tabla);
+    contenedorResultados.append(tablaResponsiva);
+
+    $('.btn-reservar').click(function() {
+        const idAmbiente = $(this).data('id');
+        const idUsuario = sessionStorage.getItem('userId');
+         
+        console.log("idAmbiente: ", idAmbiente);
+        console.log("idUsuario: ", idUsuario);
+        console.log("periodo: ", periodo);
+        console.log("fecha: ", fecha);
+        realizarReserva(idUsuario, idAmbiente, periodo, fecha);
+    });
 }
+function realizarReserva(idUsuario, idAmbiente, periodo, fecha) {
+   
+    verificarReservaExistente(idUsuario, idAmbiente, periodo, fecha, function(reservaExistente) {
+        if (reservaExistente) {
+            alert('La reserva ya fue enviada.');
+        } else {
+           
+            verificarNumeroReservasDelDia(idUsuario, idAmbiente, fecha, function(numeroReservas) {
+               
+                if (numeroReservas >= 2) {
+                    alert('Ya ha alcanzado el límite de reservas para este ambiente y fecha.');
+                } else {
+                    
+                    enviarReserva(idUsuario, idAmbiente, periodo, fecha);
+                }
+            });
+        }
+    });
+}
+
+function verificarReservaExistente(idUsuario, idAmbiente, periodo, fecha, callback) {
+    $.ajax({
+        url: `http://localhost:5000/ambiente/verificarReserva/${idUsuario}/${idAmbiente}/${periodo}/${fecha}`,
+        type: 'GET',
+        success: function(res) {
+            callback(res.reservaExistente);
+        },
+        error: function(error) {
+            console.error("Error al verificar la reserva:", error);
+            callback(false); 
+        }
+    });
+}
+
+function verificarNumeroReservasDelDia(idUsuario, idAmbiente, fecha, callback) {
+    $.ajax({
+        url: `http://localhost:5000/ambiente/numeroReservasDelDia/${idUsuario}/${idAmbiente}/${fecha}`,
+        type: 'GET',
+        success: function(res) {
+            callback(res.numReservas);
+        },
+        error: function(error) {
+            console.error("Error al verificar el número de reservas:", error);
+            callback(0); 
+        }
+    });
+}
+
+function enviarReserva(idUsuario, idAmbiente, periodo, fecha) {
+    $.ajax({
+        url: `http://localhost:5000/ambiente/crearReserva`,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ idUsuario, idAmbiente, periodo, fecha }),
+        success: function(response) {
+            alert(response.message);
+        },
+        error: function(error) {
+            console.error("Error al crear la reserva:", error);
+            alert("Error al realizar la reserva.");
+        }
+    });
+}
+
+

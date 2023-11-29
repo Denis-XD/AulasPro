@@ -4,11 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Recoger los datos del formulario
         const usuario = document.getElementById('usuario').value;
         const contrasena = document.getElementById('contrasena').value;
 
-        // Enviar los datos al servidor para autenticación
         try {
             const response = await fetch('/login', {
                 method: 'POST',
@@ -20,23 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
 
-            // Comprobar si el usuario es válido
-
             if (data.valido) {
-                
-                
+                                
                 sessionStorage.setItem('user', data.nom);
+                sessionStorage.setItem('userId', data.idUser);
 
                 if (data.admi) {
-                    // Redirigir al usuario a la página de administrador si el atributo "admi" es verdadero
-                    window.location.href = '../html/administrador.html';
-                    
-                } else {
-                    // Redirigir al usuario a la página principal si el atributo "admi" es falso
+                    window.location.href = '../html/administrador.html';                   
+                } else {        
                     window.location.href = '../html/principal.html';
                 }
-            } else {
-                // Mostrar un mensaje si las credenciales son incorrectas
+            } else {          
                 alert('Usuario o contraseña incorrecta');
             }
         } catch (error) {

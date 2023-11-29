@@ -11,12 +11,12 @@ router.post('/login', async (req, res) => {
         const user = await knex('usuario').where({ usuario }).first();
         
         if (user && contrasena === user.contrasena) { 
-            // Si el usuario existe y la contraseña es correcta
+           
             res.json({
                 valido: true,
                 admi: user.admi,
-                nom: user.nombre_usu
-                 
+                nom: user.nombre_usu,
+                idUser: user.id_usuario                 
             });
         } else {
             res.json({
