@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const knex = require('knex')(require('./knexfile').development);
 const ambienteRoutes = require('./ambienteRoutes');
 const loginRoutes = require('./loginRoutes');
-//const cors = require('cors');
 
 const app = express();
 
@@ -16,10 +15,6 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
 
 
-// Middleware para permitir solicitudes CORS
-//app.use(cors());
-
-// Ruta para servir el archivo index.html
 app.get('/', (req, res) => {
     const filePath = path.join(__dirname, '../client/html/index.html');
     res.sendFile(filePath);
@@ -35,7 +30,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('¡Algo salió mal!');
 });
 
-// Inicio del servidor
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
