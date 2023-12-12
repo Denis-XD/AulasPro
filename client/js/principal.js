@@ -6,15 +6,12 @@ $(document).ready(function () {
         event.preventDefault();
         const fechaSeleccionada = $('#fecha').val();
         const periodoSeleccionado = $('#periodo').val();
-        
-  
-
+         
         if (new Date(fechaSeleccionada) <= new Date()) {
             alert("Ingrese una fecha válida.");
             return;
         }
-         
-    
+        
         buscarAmbientesPorFecha(fechaSeleccionada, periodoSeleccionado);
     });
 

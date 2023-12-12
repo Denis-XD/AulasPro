@@ -106,4 +106,6 @@ function descargarTablaEnPDF() {
     doc.save('Reservas.pdf');
 }
 
-
+setInterval(function() {
+    cargarReservas()
+}, 10000);

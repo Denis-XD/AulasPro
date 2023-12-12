@@ -2,10 +2,6 @@ const express = require('express');
 const knexConfig = require('./knexfile').development;
 const knex = require('knex')(knexConfig);
 const router = express.Router();
-//const multer = require('multer');
-//const Papa = require('papaparse');
-//const fs = require('fs');
-//const upload = multer({ dest: 'uploads/' });
 
 //Obtener todas las aulas
 router.get('/getAulas', (req, res) => {
@@ -123,7 +119,7 @@ router.get('/aulasDisponibles/:fecha/:idPeriodo', async (req, res) => {
                     .whereRaw('r.id_ambiente = a.id_ambiente')
                     .andWhere('r.fecha', fecha)
                     .andWhere('p.id_periodo', idPeriodo)
-                    .andWhere('r.estado', 'Aceptado')
+                    .whereIn('r.estado', ['Aceptado', 'Pendiente'])
             )
             .groupBy('a.id_ambiente')
             .orderBy('a.numero');
@@ -160,7 +156,7 @@ router.get('/aulasDisponibles/:fecha/:idPeriodo/:capacidadUsuario', async (req, 
                     .whereRaw('r.id_ambiente = a.id_ambiente')
                     .andWhere('r.fecha', fecha)
                     .andWhere('p.id_periodo', idPeriodo)
-                    .andWhere('r.estado', 'Aceptado')
+                    .whereIn('r.estado', ['Aceptado', 'Pendiente'])
             )
             .groupBy('a.id_ambiente')
             .orderBy('a.numero');
@@ -285,8 +281,6 @@ router.get('/historial/:idUsuario', async (req, res) => {
 });
 
 
-
-
 // Ruta para crear un nuevo ambiente
 router.post('/crearAmbiente', async (req, res) => {
     const { tipo_ambiente, numero, capacidad, descripcion, facilidades } = req.body;
@@ -327,105 +321,6 @@ router.post('/crearReserva', async (req, res) => {
         res.status(500).json({ message: 'Error al crear la reserva' });
     }
 });
-
-/*
-// Ruta para cargar y procesar el archivo CSV
-router.post('/agregarAmbientesCSV', upload.single('archivo'), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No se recibió ningún archivo.' });
-        }
-
-        const csvData = fs.readFileSync(req.file.path, 'utf8');
-        
-        Papa.parse(csvData, {
-            header: true,
-            complete: async (results) => {
-                const ambientes = [];
-                const errores = [];
-
-                for (let row of results.data) {
-                    try {
-
-
-                        // Validaciones de 'Tipo_de_aula'
-                        // TODO: Realizar la búsqueda en la base de datos por 'Tipo_de_aula' y obtener su llave.
-
-                        // Validaciones de 'Numero_de_aula'
-                        if (typeof row.Numero_de_aula === 'string' && row.Numero_de_aula.length === 4 &&
-                            /^\d{3}$/.test(row.Numero_de_aula.substring(0, 3)) &&
-                            /[a-zA-Z]/.test(row.Numero_de_aula[3])) {
-                            row.Numero_de_aula = row.Numero_de_aula.toUpperCase();
-                            // TODO: Comprobar en la base de datos si el 'Numero_de_aula' ya existe.
-                        } else {
-                            throw new Error('Formato de número de aula incorrecto.');
-                        }
-
-                        // Validaciones de 'Capacidad'
-                        const capacidad = parseInt(row.Capacidad, 10);
-                        if (isNaN(capacidad) || capacidad < 10 || capacidad > 100) {
-                            throw new Error('Capacidad fuera de rango.');
-                        }
-
-                        // Procesar 'Descripcion'
-                        const descripcion = row.Descripcion || "";
-
-                        // Llamada al procedimiento almacenado para crear el ambiente
-                        const id_ambiente = await knex.raw('CALL crearAmbiente(?, ?, ?, ?)', [
-                            // Aquí deberías usar la llave obtenida para 'Tipo_de_aula'
-                            // tipoAulaLlave,
-                            row.Tipo_de_aula,
-                            row.Numero_de_aula,
-                            capacidad,
-                            descripcion
-                        ]).then(resp => resp[0][0][0].v_id_ambiente);
-
-                        ambientes.push({ id_ambiente, ...row });
-
-                        // Procesamiento de 'Facilidades'
-                        let facilidadesLlaves = [];
-                        if (row.Facilidades) {
-                            const facilidades = row.Facilidades.split(', ');
-                            for (let nombreFacilidad of facilidades) {
-                                // TODO: Buscar en la base de datos la llave de cada 'nombreFacilidad'.
-                                // Supongamos que obtenemos la llave como `id_facilidad`.
-                                // Evitar llaves duplicadas
-                                if (!facilidadesLlaves.includes(id_facilidad)) {
-                                    facilidadesLlaves.push(id_facilidad);
-                                }
-                            }
-                        }
-
-                        // Asignar las facilidades al ambiente creado
-                        for (let id_facilidad of facilidadesLlaves) {
-                            await knex.raw('CALL agregarFacilidad(?, ?)', [id_ambiente, id_facilidad]);
-                        }
-                    } catch (error) {
-                        errores.push({ fila: row, error: error.message });
-                    }
-                }
-
-                // Verificar si hubo errores
-                if (errores.length > 0) {
-                    res.status(400).json({ message: 'Errores en algunas filas.', errores });
-                } else {
-                    res.json({ message: 'Todos los ambientes se han agregado exitosamente', ambientes });
-                }
-            },
-            error: (error) => {
-                return res.status(500).json({ message: 'Error al parsear el archivo CSV', error: error.message });
-            }
-        });
-
-    } catch (error) {
-        console.error("Error al procesar el archivo:", error);
-        res.status(500).json({ message: 'Error al procesar el archivo', error: error.message });
-    } finally {
-        // Eliminar el archivo subido después de procesarlo
-        fs.unlinkSync(req.file.path);
-    }
-});*/
-
 
 // Cambiar el estado del atributo habilitado de un aula específica
 router.put('/:id/habilitado', (req, res) => {

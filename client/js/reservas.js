@@ -81,4 +81,12 @@ function descargarTablaEnPDF() {
     doc.save('Historial_Reservas.pdf');
 }
 
+setInterval(function() {
+    const idUsuario = sessionStorage.getItem('userId');
+    if (idUsuario) {
+        cargarReservas(idUsuario);
+    }
+}, 30000);
+
+
 

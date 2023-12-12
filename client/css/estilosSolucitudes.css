@@ -30,7 +30,7 @@
 .table-responsive tbody tr.estado-rechazado {
     background-color: rgb(240, 108, 93);
 }
-/* Estilos para tablas responsivas */
+
 @media screen and (max-width: 768px) {
     .table-responsive table, .table-responsive thead, .table-responsive tbody, .table-responsive th, .table-responsive td, .table-responsive tr {
         display: block;

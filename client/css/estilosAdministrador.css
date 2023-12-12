@@ -22,7 +22,7 @@
     background-color: #ddd;
 }
 
-/* Estilos para tablas responsivas */
+
 @media screen and (max-width: 768px) {
     .custom-table, .custom-table thead, .custom-table tbody, .custom-table th, .custom-table td, .custom-table tr {
         display: block;
